@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOLTUPLE — Gestione Gare Multiple</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">MOLT<span>UPLE</span></div>
+  <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:2px;color:var(--muted)">GESTIONE GARE MULTIPLE</div>
+</header>
+
+<nav>
+  <button class="active" onclick="showPage('dashboard')">Dashboard</button>
+  <button onclick="showPage('squadre')">Squadre</button>
+  <button onclick="showPage('atleti')">Atleti</button>
+  <button onclick="showPage('risultati')">Risultati</button>
+  <button onclick="showPage('classifica')">Classifica</button>
+</nav>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <div id="page-dashboard" class="page active">
+    <div class="section-title">Dashboard</div>
+    <div class="section-sub">// panoramica generale della competizione</div>
+    <div class="stats-bar" id="stats-bar"></div>
+    <div class="card">
+      <div class="card-title">// Top 5 Atleti per Punti</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Atleta</th><th>Squadra</th><th>Gara</th><th>Punti</th></tr></thead>
+          <tbody id="top5-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SQUADRE -->
+  <div id="page-squadre" class="page">
+    <div class="section-title">Squadre</div>
+    <div class="section-sub">// crea e gestisci le squadre partecipanti</div>
+    <div class="card">
+      <div class="card-title">// Nuova Squadra</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome Squadra</label>
+          <input type="text" id="sq-nome" placeholder="es. Team Alpha">
+        </div>
+        <div class="form-group" style="max-width:120px">
+          <label>Colore</label>
+          <input type="color" id="sq-colore" value="#f0e040" style="height:38px;padding:2px;cursor:pointer">
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn btn-primary" onclick="aggiungiSquadra()">+ Aggiungi</button>
+        </div>
+      </div>
+      <div id="alert-sq" class="alert"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">// Squadre Registrate</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Colore</th><th>Nome</th><th>N° Atleti</th><th>Azioni</th></tr></thead>
+          <tbody id="squadre-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATLETI -->
+  <div id="page-atleti" class="page">
+    <div class="section-title">Atleti</div>
+    <div class="section-sub">// registra gli atleti e assegnali alle squadre</div>
+    <div class="card">
+      <div class="card-title">// Nuovo Atleta</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" id="at-nome" placeholder="Nome">
+        </div>
+        <div class="form-group">
+          <label>Cognome</label>
+          <input type="text" id="at-cognome" placeholder="Cognome">
+        </div>
+        <div class="form-group">
+          <label>Squadra</label>
+          <select id="at-squadra"><option value="">— Seleziona —</option></select>
+        </div>
+        <div class="form-group" style="max-width:160px">
+          <label>Tipo Gara</label>
+          <select id="at-gara">
+            <option value="decathlon">Decathlon (M)</option>
+            <option value="decathlon_f">Decathlon (F)</option>
+            <option value="eptathlon">Eptathlon</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn btn-primary" onclick="aggiungiAtleta()">+ Aggiungi</button>
+        </div>
+      </div>
+      <div id="alert-at" class="alert"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">// Atleti Registrati</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nome</th><th>Cognome</th><th>Squadra</th><th>Gara</th><th>Punti Tot.</th><th>Azioni</th></tr></thead>
+          <tbody id="atleti-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- RISULTATI -->
+  <div id="page-risultati" class="page">
+    <div class="section-title">Risultati</div>
+    <div class="section-sub">// inserisci i risultati per ogni disciplina</div>
+    <div class="card">
+      <div class="card-title">// Seleziona Atleta</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Atleta</label>
+          <select id="ris-atleta" onchange="caricaFormRisultati()">
+            <option value="">— Seleziona atleta —</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div id="form-risultati-container" style="display:none">
+      <div class="card">
+        <div class="card-title" id="ris-card-title">// Inserisci Risultati</div>
+        <div id="alert-ris" class="alert"></div>
+        <div class="discipline-grid" id="discipline-inputs"></div>
+        <div class="bm-section" id="bonus-malus-section"></div>
+        <div style="margin-top:1.5rem;display:flex;gap:1rem;flex-wrap:wrap">
+          <button class="btn btn-primary"   onclick="salvaRisultati()">Salva Risultati</button>
+          <button class="btn btn-secondary" onclick="calcolaPunti()">Calcola Punti</button>
+        </div>
+        <div id="punti-preview" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLASSIFICA -->
+  <div id="page-classifica" class="page">
+    <div class="section-title">Classifica</div>
+    <div class="section-sub">// ranking atleti e squadre</div>
+    <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap">
+      <button class="btn btn-secondary" onclick="mostraClassifica('tutti')"      id="cf-tutti">Tutti</button>
+      <button class="btn btn-secondary" onclick="mostraClassifica('decathlon')"  id="cf-deca">Decathlon (M)</button>
+      <button class="btn btn-secondary" onclick="mostraClassifica('decathlon_f')" id="cf-deca_f">Decathlon (F)</button>
+      <button class="btn btn-secondary" onclick="mostraClassifica('eptathlon')"  id="cf-epta">Eptathlon</button>
+    </div>
+    <div class="card">
+      <div class="card-title">// Classifica Individuale</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Atleta</th><th>Squadra</th><th>Gara</th><th>Punti Totali</th></tr></thead>
+          <tbody id="classifica-individuale"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">// Classifica Squadre</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Squadra</th><th>Atleti</th><th>Punti Totali</th></tr></thead>
+          <tbody id="classifica-squadre"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
