@@ -205,13 +205,13 @@ const BONUS_LIST = [
   { id: 'podio_singola', label: 'Podio gara singola',     punti: null, range: [100, 150], perc: null },
   { id: 'primo_multi',   label: '1° posto gara multipla', punti: 250,  range: null,       perc: null },
   { id: 'podio_multi',   label: 'Podio gara multipla',    punti: null, range: [150, 200], perc: null },
-  { id: 'perc5',         label: '+5% sul personale',      punti: null, range: null,       perc: 1.2  },
+  { id: 'perc5',         label: '+5% sul personale',      punti: null, range: null,       perc: 20  },
 ];
 const MALUS_LIST = [
   { id: 'falsa',        label: 'Falsa partenza',           punti: -150, range: null, perc: null },
   { id: 'stecche',      label: '3 stecche',                punti: -200, range: null, perc: null },
   { id: 'squalificato', label: 'Squalificato',             punti: -300, range: null, perc: null },
-  { id: 'perc95',       label: '95% inferiore al PB',      punti: null, range: null, perc: -0.2 },
+  { id: 'perc95',       label: '95% inferiore al PB',      punti: null, range: null, perc: -20 },
 ];
 
 function calcolaBonus(bonusObj, puntiBase) {
