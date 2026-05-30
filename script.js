@@ -246,11 +246,11 @@ function leggiBonus() {
 // PUNTEGGI — somma di tutte le gare dell'atleta
 // ============================================================
 function calcolaPuntiGara(gara, atletaGara) {
-  // gara = { discipline: {}, bonus: {} }
   const disc = getDiscipline(atletaGara);
   const base = disc.reduce((acc, d) => acc + calcolaIAAF(d.id, gara.discipline?.[d.id] ?? ''), 0);
   const bonus = calcolaBonus(gara.bonus || {}, base);
-  return { base, bonus, totale: base + bonus };
+  const manuali = gara.puntiManuali || 0;
+  return { base, bonus, manuali, totale: base + bonus + manuali };
 }
 
 function getPuntiTotali(atletaId) {
@@ -589,7 +589,8 @@ function salvaRisultati() {
     if (v !== '' && v !== undefined) discipline[d.id] = parseFloat(v);
   });
   const bonus = leggiBonus();
-  const garaData = { discipline, bonus };
+  const puntiManuali = parseInt(document.getElementById('punti-manuali')?.value) || 0;
+  const garaData = { discipline, bonus, puntiManuali };
 
   if (!DB.risultati[atletaSelezionato]) DB.risultati[atletaSelezionato] = [];
 
@@ -640,7 +641,22 @@ function calcolaPunti() {
     ${bonusDet ? `<div class="punti-bonus" style="color:${bonusExtra >= 0 ? '#40e060' : 'var(--accent3)'}">
       Bonus/Malus: ${bonusExtra >= 0 ? '+' : ''}${bonusExtra} pt — ${bonusDet}
     </div>` : ''}
-    <div class="punti-tot">TOTALE GARA <strong>${totale}</strong> pt</div>`;
+    <div class="punti-tot">TOTALE GARA <strong>${totale}</strong> pt</div>
+    <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+      <label style="font-size:0.68rem;letter-spacing:1.5px;color:var(--muted)">PUNTI MANUALI (gare extra, correzioni)</label>
+      <div style="display:flex;gap:0.5rem;margin-top:0.5rem;align-items:center">
+        <input type="number" id="punti-manuali" placeholder="es. +150 o -50"
+          style="width:180px;padding:0.5rem 0.8rem;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text);font-size:0.9rem;outline:none">
+        <span style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted)">
+          = TOTALE <strong id="totale-con-manuali" style="color:var(--accent);font-size:1.1rem">${totale}</strong> pt
+        </span>
+      </div>
+    </div>`;
+
+  document.getElementById('punti-manuali').addEventListener('input', function() {
+    const extra = parseInt(this.value) || 0;
+    document.getElementById('totale-con-manuali').textContent = totale + extra;
+  });
 }
 
 // ============================================================
